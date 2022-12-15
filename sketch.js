@@ -1,5 +1,7 @@
 let blockSize = 70;
 let allBlocks = [];
+let imageUrlArray = ['assets/n.png', 'assets/p.png', 'assets/r.png'];
+let imageVarArray = [];
 
 class initBlock {
   constructor (x, y) {
@@ -23,17 +25,19 @@ class Block {
     this.x = x
     this.y = y
     this.fallSpeed = 5;
+    this.img = random(imageVarArray);
+    this.angle = 0;
   }
 
   draw () {
     // Draw the object at the cartesian coordinate
     noStroke();
     fill(200);
-    rect(this.x, this.y, blockSize, blockSize);
+    image(this.img, this.x, this.y, blockSize, blockSize);
   }
 
   swing () {
-
+    angleMode(RADIANS);
     // Convert polar to cartesian
     this.x = this.radius * cos(this.theta);
     this.y = this.radius * sin(this.theta);
@@ -55,13 +59,34 @@ class Block {
   drop () {
     this.y += this.fallSpeed;
     
-    // if placed successfully
-    if(abs(allBlocks[allBlocks.length - 2].y - this.y) <= blockSize 
-    && abs(this.x - allBlocks[allBlocks.length - 2].x) < blockSize) {
-      this.fallSpeed = 0;
-      dropState = false;
-      initNewBlockState = true;
-    }
+    if(abs(allBlocks[allBlocks.length - 2].y - this.y) <= blockSize) {
+
+      // if placed successfully
+      if(abs(this.x - allBlocks[allBlocks.length - 2].x) < blockSize/2) {
+        this.fallSpeed = 0;
+        dropState = false;
+        initNewBlockState = true;
+      }
+
+      // if came close but missed
+      if(abs(this.x - allBlocks[allBlocks.length - 2].x) >= blockSize/2 
+      && abs(this.x - allBlocks[allBlocks.length - 2].x) <= blockSize) {
+
+        // if fell to the right
+        if(this.x - allBlocks[allBlocks.length - 2].x > 0) {
+          this.x += 5;
+        } else {
+          this.x -= 5;
+        }
+
+        if(this.y > height + 100) {
+          dropState = false;
+          initNewBlockState = true;
+          allBlocks.pop()
+        }
+      }
+    } 
+    
 
     // add another condition if comes close but misses
 
@@ -92,9 +117,17 @@ let swingState = true;
 let dropState = false;
 let initNewBlockState = false;
 
+let incrChange = 0;
+
+function preload() {
+  for(let i = 0; i < imageUrlArray.length; i++) {
+    imageVarArray[i] = loadImage(imageUrlArray[i]);
+  }
+}
+
 function setup() {
   createCanvas(800, 800);
-  ellipseMode(CENTER);
+  imageMode(CENTER);
   rectMode(CENTER);
 
   // Initialize all values
@@ -136,10 +169,12 @@ function draw() {
     }
   }
 
-  if (initNewBlockState && allBlocks[allBlocks.length - 1].y <= (height - 200)) {
-    allBlocks.forEach(block => {
-      block.y += blockSize
-    });
+  if (allBlocks.length > 2) {
+    if (allBlocks[allBlocks.length - 2].y <= height/2) {
+      for(let i = 0; i < allBlocks.length - 1; i++) {
+        allBlocks[i].y += 5;
+      }
+    }
   }
 
   if(initNewBlockState) {
