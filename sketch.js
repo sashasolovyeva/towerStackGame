@@ -1,5 +1,9 @@
 let blockSize = 70;
 let allBlocks = [];
+let score = 0;
+
+let font = 'Helvetica';
+let fontSize = 20;
 
 class initBlock {
   constructor (x, y) {
@@ -59,6 +63,7 @@ class Block {
     if(abs(allBlocks[allBlocks.length - 2].y - this.y) <= blockSize 
     && abs(this.x - allBlocks[allBlocks.length - 2].x) < blockSize) {
       this.fallSpeed = 0;
+      score += 50;
       dropState = false;
       initNewBlockState = true;
     }
@@ -69,7 +74,7 @@ class Block {
     if(this.y > height + 100) {
       // TODO
       // minus points / life lost
-
+      score -= 20
       dropState = false;
       initNewBlockState = true;
       allBlocks.pop()
@@ -92,10 +97,19 @@ let swingState = true;
 let dropState = false;
 let initNewBlockState = false;
 
+// function preload() {
+//   font = loadFont('assets/fonts/PressStart.ttf');
+// }
+
 function setup() {
   createCanvas(800, 800);
   ellipseMode(CENTER);
   rectMode(CENTER);
+
+  // font setup
+  textFont(font);
+  textSize(fontSize);
+  textAlign(CENTER, CENTER)
 
   // Initialize all values
   r = height * 0.25;
@@ -118,6 +132,9 @@ function draw() {
   translate(width / 2, 0);
 
   firstBlock.draw();
+
+  textAlign(LEFT);
+  drawScore(width * 0.25);
 
   // start at 1 to skip the initial block
   for (i = 1; i < allBlocks.length; i++){ 
@@ -155,4 +172,9 @@ function keyPressed () {
     swingState = false;
     dropState = true;
   }
+}
+
+function drawScore(position) {
+  fill(255);
+  text("SCORE: " + score.toString(), position, height * 0.90);
 }
