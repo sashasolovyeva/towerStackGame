@@ -1,6 +1,9 @@
+let gamePlaying;
+
 let blockSize = 70;
 let allBlocks = [];
-let score = 0;
+let score;
+let lives;
 
 let font = 'Helvetica';
 let fontSize = 20;
@@ -72,9 +75,9 @@ class Block {
 
     // if placed unsuccessfully
     if(this.y > height + 100) {
-      // TODO
-      // minus points / life lost
-      score -= 20
+      // lose a life
+      lives--;
+      
       dropState = false;
       initNewBlockState = true;
       allBlocks.pop()
@@ -111,6 +114,12 @@ function setup() {
   textSize(fontSize);
   textAlign(CENTER, CENTER)
 
+  gamePlaying = true;
+
+  score = 0;
+  lives = 3;
+  allBlocks = [];
+
   // Initialize all values
   r = height * 0.25;
   theta = radians(159);
@@ -131,50 +140,68 @@ function draw() {
   // Translate the origin point to the center of the screen
   translate(width / 2, 0);
 
-  firstBlock.draw();
-
+  // draw scoreboard
   textAlign(LEFT);
   drawScore(width * 0.25);
+  drawLives(width * 0.1);
 
-  // start at 1 to skip the initial block
-  for (i = 1; i < allBlocks.length; i++){ 
-    allBlocks[i].draw();
+  if (lives <= 0) {
+    gamePlaying = false;
   }
-  
-  if (allBlocks.length > 1) {
-    if (swingState){
-      allBlocks[allBlocks.length - 1].swing();
-      stroke(255);
-      line(0, 0, allBlocks[allBlocks.length - 1].x, allBlocks[allBlocks.length - 1].y);
+
+  if (gamePlaying) {
+    firstBlock.draw();
+
+    // start at 1 to skip the initial block
+    for (i = 1; i < allBlocks.length; i++){ 
+      allBlocks[i].draw();
+    }
+    
+    if (allBlocks.length > 1) {
+      if (swingState){
+        allBlocks[allBlocks.length - 1].swing();
+        stroke(255);
+        line(0, 0, allBlocks[allBlocks.length - 1].x, allBlocks[allBlocks.length - 1].y);
+      }
+
+      if (dropState){
+        allBlocks[allBlocks.length - 1].drop();
+      }
     }
 
-    if (dropState){
-      allBlocks[allBlocks.length - 1].drop();
+    if (initNewBlockState && allBlocks[allBlocks.length - 1].y <= (height - 200)) {
+      allBlocks.forEach(block => {
+        block.y += blockSize
+      });
     }
-  }
 
-  if (initNewBlockState && allBlocks[allBlocks.length - 1].y <= (height - 200)) {
-    allBlocks.forEach(block => {
-      block.y += blockSize
-    });
-  }
-
-  if(initNewBlockState) {
-    currentBlock = new Block(theta, theta_vel, direction, r, x, y)
-    allBlocks.push(currentBlock);
-    initNewBlockState = false;
-    swingState = true;
+    if(initNewBlockState) {
+      currentBlock = new Block(theta, theta_vel, direction, r, x, y)
+      allBlocks.push(currentBlock);
+      initNewBlockState = false;
+      swingState = true;
+    }
   }
 }
 
 function keyPressed () {
   if (keyCode == 0x20 /* SPACE */) {
-    swingState = false;
-    dropState = true;
+    if (gamePlaying) {
+      swingState = false;
+      dropState = true;
+    }
+    else {
+      setup();
+    }
   }
 }
 
 function drawScore(position) {
   fill(255);
   text("SCORE: " + score.toString(), position, height * 0.90);
+}
+
+function drawLives(position) {
+  fill(255);
+  text("LIVES: " + lives.toString(), position, height * 0.90);
 }
