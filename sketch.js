@@ -72,6 +72,7 @@ class Block {
 
       dropState = false;
       initNewBlockState = true;
+      allBlocks.pop()
     }
   }
 }
@@ -97,7 +98,7 @@ function setup() {
   rectMode(CENTER);
 
   // Initialize all values
-  r = height * 0.45;
+  r = height * 0.25;
   theta = radians(159);
   theta_vel = 0.03;
   direction = -1;
@@ -133,6 +134,12 @@ function draw() {
     if (dropState){
       allBlocks[allBlocks.length - 1].drop();
     }
+  }
+
+  if (initNewBlockState && allBlocks[allBlocks.length - 1].y <= (height - 200)) {
+    allBlocks.forEach(block => {
+      block.y += blockSize
+    });
   }
 
   if(initNewBlockState) {
