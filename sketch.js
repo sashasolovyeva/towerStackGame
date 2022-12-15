@@ -1,3 +1,19 @@
+let blockSize = 70;
+let allBlocks = [];
+
+class initBlock {
+  constructor (x, y) {
+    this.x = x;
+    this.y = y;
+  }
+
+  draw () {
+    noStroke();
+    fill(200);
+    rect(this.x, this.y, blockSize, blockSize);
+  }
+}
+
 class Block {
   constructor (theta, theta_vel, direction, radius, x, y) {
     this.theta = theta
@@ -6,14 +22,14 @@ class Block {
     this.radius = radius
     this.x = x
     this.y = y
+    this.fallSpeed = 5;
   }
 
   draw () {
-        // Draw the ellipse at the cartesian coordinate
-        ellipseMode(CENTER);
-        noStroke();
-        fill(200);
-        ellipse(this.x, this.y, 32, 32);
+    // Draw the object at the cartesian coordinate
+    noStroke();
+    fill(200);
+    rect(this.x, this.y, blockSize, blockSize);
   }
 
   swing () {
@@ -35,11 +51,35 @@ class Block {
     // (r remains static in this example)
     this.theta += (this.theta_vel * this.direction);
   }
+
+  drop () {
+    this.y += this.fallSpeed;
+    
+    // if placed successfully
+    if(abs(allBlocks[allBlocks.length - 2].y - this.y) <= blockSize 
+    && abs(this.x - allBlocks[allBlocks.length - 2].x) < blockSize) {
+      this.fallSpeed = 0;
+      dropState = false;
+      initNewBlockState = true;
+    }
+
+    // add another condition if comes close but misses
+
+    // if placed unsuccessfully
+    if(this.y > height + 100) {
+      // TODO
+      // minus points / life lost
+
+      dropState = false;
+      initNewBlockState = true;
+    }
+  }
 }
 
+//___________________________________________________________________________________________________
+
 let r;
-let allBlocks = [];
-let currentBlock;
+let currentBlock, firstBlock;
 // Angle and angular velocity, accleration
 let theta;
 let theta_vel;
@@ -47,15 +87,25 @@ let direction;
 let x;
 let y;
 
+let swingState = true;
+let dropState = false;
+let initNewBlockState = false;
+
 function setup() {
-  createCanvas(710, 400);
+  createCanvas(800, 800);
+  ellipseMode(CENTER);
+  rectMode(CENTER);
+
   // Initialize all values
   r = height * 0.45;
   theta = radians(159);
-  theta_vel = 0.05;
+  theta_vel = 0.03;
   direction = -1;
   x = r * cos(theta);
   y = r * sin(theta);
+
+  firstBlock = new initBlock(0, height - blockSize/2);
+  allBlocks.push(firstBlock);
 
   currentBlock = new Block(theta, theta_vel, direction, r, x, y)
   allBlocks.push(currentBlock);
@@ -63,35 +113,39 @@ function setup() {
 
 function draw() {
   background(0);
-
   // Translate the origin point to the center of the screen
   translate(width / 2, 0);
-  currentBlock.draw()
-  currentBlock.swing()
+
+  firstBlock.draw();
+
+  // start at 1 to skip the initial block
+  for (i = 1; i < allBlocks.length; i++){ 
+    allBlocks[i].draw();
+  }
+  
+  if (allBlocks.length > 1) {
+    if (swingState){
+      allBlocks[allBlocks.length - 1].swing();
+      stroke(255);
+      line(0, 0, allBlocks[allBlocks.length - 1].x, allBlocks[allBlocks.length - 1].y);
+    }
+
+    if (dropState){
+      allBlocks[allBlocks.length - 1].drop();
+    }
+  }
+
+  if(initNewBlockState) {
+    currentBlock = new Block(theta, theta_vel, direction, r, x, y)
+    allBlocks.push(currentBlock);
+    initNewBlockState = false;
+    swingState = true;
+  }
 }
-
-// this is for future encapsulation
-let g, t, gamePlaying
-
-// function setup () {
-//   createCanvas(400, 400)
-//   g = new Grid(400, 400, 7, 10)
-//   g.add(g.maxLevelLength)
-//   gamePlaying = true
-//   t = setInterval(g.step.bind(g), 100)
-// }
-
-// function draw () {
-//   background(220)
-//   g.draw()
-// }
 
 function keyPressed () {
   if (keyCode == 0x20 /* SPACE */) {
-    if (gamePlaying) {
-      g.place()
-    } else {
-      setup()
-    }
+    swingState = false;
+    dropState = true;
   }
 }
