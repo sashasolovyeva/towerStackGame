@@ -217,8 +217,8 @@ function draw() {
 
   // draw scoreboard
   text(successReport, 0, 200, 400)
-  drawScore(290, 50);
-  drawLives(290, 100);
+  drawScore(380, 50);
+  drawLives(380, 100);
 
   if (lives <= 0) {
     gamePlaying = false;
@@ -288,10 +288,14 @@ function keyPressed () {
 
 function drawScore(xPos, yPos) {
   fill(255);
+  textAlign(RIGHT)
   text("SCORE: " + score.toString(), xPos, yPos);
+  textAlign(CENTER)
 }
 
 function drawLives(xPos, yPos) {
   fill(255);
+  textAlign(RIGHT)
   text("LIVES: " + lives.toString(), xPos, yPos);
+  textAlign(CENTER)
 }
