@@ -193,6 +193,8 @@ function setup() {
   direction = -1;
   x = r * cos(theta);
   y = r * sin(theta);
+  allBlocks = [[], [], []];
+  successReport = '';
 
   for (let i = 0; i < allBlocks.length; i++) {
     firstBlock = new initBlock(-width/4 + width/4 * i, height - blockSize/2);
