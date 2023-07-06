@@ -1,6 +1,7 @@
 // ALL VARIABLES
 
 let gamePlaying;
+let gameOver = false;
 
 let blockSize = 70;
 
@@ -182,6 +183,7 @@ function setup() {
   textWrap(WORD);
 
   gamePlaying = true;
+  gameOver = false;
 
   score = 0;
   lives = 3;
@@ -216,7 +218,7 @@ function draw() {
   translate(width / 2, 0);
 
   // draw scoreboard
-  text(successReport, 0, 200, 400)
+  text(successReport, 0, 150, 400)
   drawScore(380, 50);
   drawLives(380, 100);
 
@@ -269,8 +271,13 @@ function draw() {
       swingState = true;
     }
   } else {
+
+    // GAME OVER STATE
     successReport = 'Thank you for playing!\nAll hail the Pit!';
-    image(heart, 0, 400, 150, 150);
+    image(heart, 0, 300, 150, 150);
+
+    $(".finalBoard").css("display", "block");
+    $("#finalscore").html(score);
   }
 }
 

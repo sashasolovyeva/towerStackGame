@@ -1,7 +1,60 @@
+@font-face {
+  font-family: 'PressStart';
+  src: url('assets/PressStart2P-Regular.ttf') format('truetype');
+}
+
 html, body {
     margin: 0;
     padding: 0;
   }
-  canvas {
-    display: block;
-  }
+
+canvas {
+  display: block;
+}
+
+.finalBoard {
+  position: absolute;
+  display: none;
+  background-color: black;
+  padding: 20px;
+  width: 400px;
+  top: 400px;
+  left: 400px;
+  transform: translate(-50%, -10%);
+}
+
+.inputForm {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+}
+
+.inputForm * {
+  font-family: 'PressStart', sans-serif;
+  color: white;
+}
+
+.inputForm input {
+  color: black;
+}
+
+.inputForm button {
+  width: 50%;
+  background-color: purple;
+  padding: 5px 0;
+}
+
+.leaderboard {
+  display: none;
+}
+
+.leaderboard div {
+  display: block;
+}
+
+.leaderboard * {
+  font-family: 'PressStart', sans-serif;
+  color: white;
+}
+
