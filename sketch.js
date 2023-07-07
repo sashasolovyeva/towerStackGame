@@ -205,6 +205,10 @@ function setup() {
 
   currentBlock = new Block(theta, theta_vel, direction, r, x, y, getNum())
   allBlocks[currentBlock.towerNum].push(currentBlock);
+
+  $('.leaderboard').css('display', 'none');
+  $('.finalBoard').css('display', 'none');
+  $('.inputForm').css('display', 'flex' );
 }
 
 let a1, a2, a3;
